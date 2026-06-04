@@ -1,81 +1,88 @@
-# Digital-Signal-Processing
-=========================
+- [Pipeline.py](#pipelinepy)
+  - [Note](#note)
+  - [Input](#input)
+  - [Output](#output)
+- [Processing.py](#processingpy)
+  - [Note](#note-1)
+  - [Input](#input-1)
+  - [Output](#output-1)
+- [WavSplit.py](#wavsplitpy)
+  - [Note](#note-2)
+  - [Input](#input-2)
+  - [Output](#output-2)
+- [Graphs.py](#graphspy)
+- [IceDetector.py](#icedetectorpy)
+- [Utils.py](#utilspy)
 
-Processing SWIFT buoy hydrophone data from the Arctic Ocean.
+## Pipeline.py
+### Note
+Runs the splitter then the processor.
 
-🛠️ Installation Set-up to run this project...
+### Input
 
-1.  Prerequisites You need Miniconda or Anaconda installed.
+| flag |    full flag     | type  | default  | notes                                                                                  |
+| :--- | :--------------: | :---: | :------: | :------------------------------------------------------------------------------------- |
+| -i   |   --input-dir    |  str  | REQUIRED | Exact filepath to raw audio dir                                                        |
+| -m   |    --mat-file    |  str  | REQUIRED | Exact filepath to .mat file                                                            |
+| -img |    --img-dir     |  str  | REQUIRED | Exact filepath to outermost dir with images                                            |
+| -ol  |  --output-level  |  int  |    1     | Output level: 0 debug, 1 standard, 2 error only                                        |
+| -sl  | --segment-length |  int  |    20    | Length of each segment                                                                 |
+| -lc  |    --low-cut     | float |  500.0   | The lowcut applied in Hz                                                               |
+| -hc  |    --high-cut    | float | 20000.0  | The highcut applied in Hz                                                              |
+| -np  |    --nperseg     |  int  |   2048   | Size of chunk send to FFT                                                              |
+| -fs  | --fs-calibration | float |  170.0   | Calibration level                                                                      |
+| -fo  |  --filter-order  |  int  |    4     | Order of the bandpass filter                                                           |
+| -so  |  --start-offset  |  int  |    0     | The number of seconds after the start to start the analysis                            |
+| -eo  |   --end-offset   |  int  |    0     | The number of seconds before the end to end the analysis                               |
+| -sc  |  --sample-count  |  int  | 1000000  | The number of samples to take during analysis. Values < 0 collect as many as possible. |
 
-2.  Set up the Environment Open your terminal in this folder and run the following commands to install Python, NumPy, SciPy, Matplotlib, and Requests automatically: `conda env create -f environment.yml` `conda activate Digital-Signal-Processing`
+### Output
+A folder titled "output_charts" placed inside the input dir where all graphs are placed. A folder titled "output_segments" containing processed audio if processing needs to be run again.
 
-⚙️ Configuration: `RAW_AUDIO_DIR` = "C:{YOUR_DIRECTORY}" `SEGMENT_DIR` = "C:{YOUR_DIRECTORY}\output_segments" `ANALYSIS_DIR` = "C:{YOUR_DIRECTORY}\output_charts" `SEGMENT_MINUTES` = 12, 30, 60 (just your time in minutes!) `FS_CALIBRATION_LEVEL` = 170.0 (Sensitivity of Hydrophone; Value can be changed if working with non-SWIFT buoys, but likely will not need this to change.)
+## Processing.py
 
-This project requires a Tempest API token to fetch weather data. Rename `config.json.example` to `config.json`.
+### Note
+Input .wav files must all have the same sample rate.
 
-Open it and fill in your credentials:
+### Input
+| var  |    secondary     | type  | default  | notes                                                                                  |
+| :--- | :--------------: | :---: | :------: | :------------------------------------------------------------------------------------- |
+| -i   |   --input-dir    |  str  | REQUIRED | Exact filepath to audio dir                                                            |
+| -m   |    --mat-file    |  str  | REQUIRED | Exact filepath to .mat file                                                            |
+| -img |    --img-dir     |  str  | REQUIRED | Exact filepath to outermost dir with images                                            |
+| -ol  |  --output-level  |  int  |    1     | Output level: 0 debug, 1 standard, 2 error only                                        |
+| -lc  |    --low-cut     | float |  500.0   | The lowcut applied in Hz                                                               |
+| -hc  |    --high-cut    | float | 20000.0  | The highcut applied in Hz                                                              |
+| -np  |    --nperseg     |  int  |   2048   | Size of chunk send to FFT                                                              |
+| -fs  | --fs-calibration | float |  170.0   | Calibration level                                                                      |
+| -fo  |  --filter-order  |  int  |    4     | Order of the bandpass filter                                                           |
+| -so  |  --start-offset  |  int  |    0     | The number of seconds after the start to start the analysis                            |
+| -eo  |   --end-offset   |  int  |    0     | The number of seconds before the end to end the analysis                               |
+| -sc  |  --sample-count  |  int  | 1000000  | The number of samples to take during analysis. Values < 0 collect as many as possible. |
 
-```
-{
-    "tempest_api_token": "YOUR_LONG_TOKEN_STRING",
-    "station_id": "82486",
-    "tempest_device_id": "YOUR_DEVICE_ID"
-}
+### Output
+A folder titled "output_charts" placed next to the input dir where all graphs are placed.
 
-```
+## WavSplit.py
 
-NOTE: `station_id: 82486` refers to the GLRC station in the Portage Canal.
+### Note
+Should not be called directly unless only splitting audio is desired.
 
-After setting these to use this program, you simply run the file: `run_pipeline.py` The execution progress can be traced via the output in the Terminal I/O.
+### Input
+| var  |    secondary     | type  | default  | notes                                           |
+| :--- | :--------------: | :---: | :------: | :---------------------------------------------- |
+| -i   |   --input-dir    |  str  | REQUIRED | Exact filepath to raw audio dir                 |
+| -ol  |  --output-level  |  int  |    1     | Output level: 0 debug, 1 standard, 2 error only |
+| -sl  | --segment-length |  int  |    20    | Length of each segment                          |
 
-Project Structure:
+### Output
+A folder titled "output_segments" placed inside the input dir where split audio is placed.
 
--   [ ] `run_pipeline.py` (Main script)
+## Graphs.py
+Contains all graphs to be built.
 
--   [ ] `wav_split.py` (WAV file splitter)
+## IceDetector.py
+Contains the code to modify the neural network used when detecting ice in images.
 
--   [ ] `weather_history.py` (TEMPEST API file)
-
--   [ ] `snap_hydrophone_processing.py` (File processing)
-
--   [ ] `event_flags.py` (RMS-based transient detection and event-flag generation for ML)
-
--   [ ] `spec_features.py` (Spectral feature extraction and ML-ready spectrogram exporting)
-
--   [ ] `debug_tempest_config.py` (The diagnostic tool if using different Tempest stations to find correct Device ID, which is distinct from a Station ID)
-
--   [ ] `environment.yml` (For installation)
-
--   [ ] `README.md` (The instructions above)
-
--   [ ] `config.json.example` (Dummy keys -> create your own config.json with this structure)
-
--   [ ] `.gitignore`
-
--   [ ] `config.json` (⚠️ **DELETE THIS or ADD TO GITIGNORE before sharing! 🛑 Never upload your API keys please it's pertinent to prevent abuse. 🛑** ⚠️)
-
-TO REITERATE, `tempest_api_token` should NEVER be uploaded to GitHub or any online accessible source to prevent abuse.
-
-* * * * *
-
-### 🧠 Machine Learning & Event Detection Features
-
-**Event Flagging (`event_flags.py`)**
-
--   **Transient Detection**: Uses sliding RMS energy thresholds to automatically identify acoustic events.
-
--   **Metadata Export**: Generates `.flags.json` and master `.csv` logs containing timestamps, labels, and detection scores.
-
--   **Visual Verification**: Produces spectrograms with red vertical markers overlaying the detected events for quick manual review.
-
-**Feature Extraction (`spec_features.py`)**
-
--   **Spectral Analysis**: Computes spectral centroid, bandwidth, and roll-off per time slice to characterize the "sound color" of buoy data.
-
--   **Computer Vision Ready**: Exports normalized, grayscale PNG spectrograms (default 224x224) optimized for CNN training.
-
--   **Efficient Storage**: Saves compressed `.npz` files containing high-precision frequency, time, and power data.
-
-* * * * *
-
-🔧 Troubleshooting: "No Data Found" for Weather? Run the diagnostic tool: `debug_tempest_config.py` This will verify if your API token is working and if you have selected the correct Device ID (Sensor vs Hub)
+## Utils.py
+Contains utility functions and commonly used types.
