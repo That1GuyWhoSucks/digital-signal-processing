@@ -6,4 +6,7 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
-  - requests
+  - opencv-python
+  - torch
+  - pillow
+  - torchvision
