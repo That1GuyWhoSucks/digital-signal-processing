@@ -13,8 +13,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-i", "--input-dir", type=str, required=True, help="Exact filepath to audio dir")
     parser.add_argument("-m", "--mat-file", type=str, required=True, help="Exact filepath to .mat file")
-    parser.add_argument("-img", "--img-dir", type=str, required=True, help="Exact filepath to outermost dir with images")
 
+    parser.add_argument("-img", "--img-dir", type=str, default="", help="Exact filepath to outermost dir with images")
     parser.add_argument("-ol", "--output-level", type=int, default=1, help="Output level: 0 debug, 1 standard, 2 error only", choices=[0, 1, 2])
     parser.add_argument("-lc", "--low-cut", type=float, default=500.0, help="The lowcut applied in Hz")
     parser.add_argument("-hc", "--high-cut", type=float, default=20000.0, help="The highcut applied in Hz")
@@ -43,11 +43,11 @@ if __name__ == "__main__":
     makedirs(segment_dir, exist_ok=True)
     makedirs(analysis_dir, exist_ok=True)
 
-    batch_split(
-        glob(join(args.input_dir, "*.wav")),
-        args.segment_length,
-        segment_dir
-    )
+    # batch_split(
+    #     glob(join(args.input_dir, "*.wav")),
+    #     args.segment_length,
+    #     segment_dir
+    # )
 
     hydrophone_processing(
         wav_folder=segment_dir,

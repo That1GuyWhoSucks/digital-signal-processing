@@ -106,7 +106,7 @@ def wind_time_scatter(
     logging.info("Generating plot Wind speed vs time, 2/7")
     plt.figure(dpi=100, figsize=(4, 3))
 
-    plt.scatter(time_array, [raw_mat_file_data[x].windspd for x in mat_file_data_indexes])
+    plt.scatter(time_array,[(d if not (math.isnan(d := raw_mat_file_data[x].windspd)) else 0) for x in mat_file_data_indexes])
 
     plt.title(title)
 
@@ -236,7 +236,7 @@ def sound_wind_frequency_plot(
     plt.title(title)
 
     bin_width: int = 3
-    wind_array = np.array([raw_mat_file_data[x].windspd for x in mat_file_data_indexes])
+    wind_array = [(d if not (math.isnan(d := raw_mat_file_data[x].windspd)) else 0) for x in mat_file_data_indexes]
     bins: NDArray[int] = np.arange(0, np.ceil(np.max(wind_array)) + bin_width, bin_width)
 
     bin_indices: NDArray[int] = np.digitize(wind_array, bins)
@@ -284,7 +284,7 @@ def psd_frequency_plot(
     plt.title(title)
 
     bin_width: int = 5
-    wind_array = np.array([raw_mat_file_data[x].windspd for x in mat_file_data_indexes])
+    wind_array = np.array([(d if not (math.isnan(d := raw_mat_file_data[x].windspd)) else 0) for x in mat_file_data_indexes])
     bins: NDArray[int] = np.arange(0, np.ceil(np.max(wind_array)) + bin_width, bin_width)
 
     bin_indices: NDArray[int] = np.digitize(wind_array, bins)

@@ -21,10 +21,10 @@ Runs the splitter then the processor.
 ### Input
 
 | flag |    full flag     | type  | default  | notes                                                                                  |
-| :--- | :--------------: | :---: | :------: | :------------------------------------------------------------------------------------- |
+| :--- | :--------------: | :---: |:--------:| :------------------------------------------------------------------------------------- |
 | -i   |   --input-dir    |  str  | REQUIRED | Exact filepath to raw audio dir                                                        |
 | -m   |    --mat-file    |  str  | REQUIRED | Exact filepath to .mat file                                                            |
-| -img |    --img-dir     |  str  | REQUIRED | Exact filepath to outermost dir with images                                            |
+| -img |    --img-dir     |  str  |   ""     | Exact filepath to outermost dir with images                                            |
 | -ol  |  --output-level  |  int  |    1     | Output level: 0 debug, 1 standard, 2 error only                                        |
 | -sl  | --segment-length |  int  |    20    | Length of each segment                                                                 |
 | -lc  |    --low-cut     | float |  500.0   | The lowcut applied in Hz                                                               |
@@ -46,10 +46,10 @@ Input .wav files must all have the same sample rate.
 
 ### Input
 | var  |    secondary     | type  | default  | notes                                                                                  |
-| :--- | :--------------: | :---: | :------: | :------------------------------------------------------------------------------------- |
+| :--- | :--------------: | :---: |:--------:| :------------------------------------------------------------------------------------- |
 | -i   |   --input-dir    |  str  | REQUIRED | Exact filepath to audio dir                                                            |
 | -m   |    --mat-file    |  str  | REQUIRED | Exact filepath to .mat file                                                            |
-| -img |    --img-dir     |  str  | REQUIRED | Exact filepath to outermost dir with images                                            |
+| -img |    --img-dir     |  str  |    ""    | Exact filepath to outermost dir with images                                            |
 | -ol  |  --output-level  |  int  |    1     | Output level: 0 debug, 1 standard, 2 error only                                        |
 | -lc  |    --low-cut     | float |  500.0   | The lowcut applied in Hz                                                               |
 | -hc  |    --high-cut    | float | 20000.0  | The highcut applied in Hz                                                              |

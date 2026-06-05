@@ -41,13 +41,7 @@ def transform(dat: dict, img_folder: str, start: datetime, end: datetime) -> Mat
 
     if date < start or date > end:
         logging.debug(f".mat file data {date.isoformat()} is out of bounds, skipping.")
-        return MatFileData(
-            timestamp=date,
-            windspd=dat["windspd"],
-            sigwaveheight=dat["sigwaveheight"],
-            wavespectra=dat["wavespectra"],
-            file=None,
-        )
+        return None
 
     for img in sorted(os.listdir(img_folder)):  # must be sorted as os does not guarantee any order of files
         if datetime.fromisoformat(img.replace("[", ":").replace(".jpg", "")) >= date:
@@ -59,9 +53,6 @@ def transform(dat: dict, img_folder: str, start: datetime, end: datetime) -> Mat
                 file=img,
             )
 
-    if not img:
-        logging.critical("No images found.")
-        raise Exception("No images found")
     logging.error(f"No image found for date {date.isoformat()} falling back to last.")
     return MatFileData(
         timestamp=date,
@@ -211,12 +202,13 @@ def hydrophone_processing(
         raise Exception("Start after end")
 
     # build image folder for .mat to use
-    create_img_list(raw_imgs, img_folder, start, end)
+    if raw_imgs != "":
+        create_img_list(raw_imgs, img_folder, start, end)
 
     # transform .mat file to usable data
     # https://datadryad.org/dataset/doi:10.5061/dryad.jdfn2z3j1#methods
     raw_mat_file_data: List[MatFileData] = sorted(
-        [x for x in [transform(item, img_folder, start, end) for item in loadmat(mat_path, simplify_cells=True)["SWIFT"]] if x.file]
+        [x for x in [transform(item, img_folder, start, end) for item in loadmat(mat_path, simplify_cells=True)["SWIFT"]] if x]
         , key=lambda x: x.timestamp
     )
     if len(raw_mat_file_data) == 0:
@@ -293,7 +285,14 @@ def hydrophone_processing(
 
     psd: NDArray[float] = np.array(psd_list).T  # transpose
     time_array: NDArray[datetime] = np.array(segment_time_list)
-    images_array: List[IceDetector.ImageClassification] = classify_images(img_folder, [x.file for x in raw_mat_file_data])
+    if img_folder != "":
+        images_array: List[IceDetector.ImageClassification] = classify_images(img_folder, [x.file for x in raw_mat_file_data])
+    else:
+        images_array: List[IceDetector.ImageClassification] = [
+            IceDetector.ImageClassification(
+                classification=IceDetector.ImageClassification.classification.NA, confidence=1
+            ) for x in raw_mat_file_data
+        ]
     time_array: NDArray[np.float64] = mdates.date2num(time_array)
 
     logging.info("Generating graphs.")
@@ -322,8 +321,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-i", "--input-dir", type=str, required=True, help="Exact filepath to audio dir")
     parser.add_argument("-m", "--mat-file", type=str, required=True, help="Exact filepath to .mat file")
-    parser.add_argument("-img", "--img-dir", type=str, required=True, help="Exact filepath to outermost dir with images")
 
+    parser.add_argument("-img", "--img-dir", type=str, default="", help="Exact filepath to outermost dir with images")
     parser.add_argument("-ol", "--output-level", type=int, default=1, help="Output level: 0 debug, 1 standard, 2 error only", choices=[0, 1, 2])
     parser.add_argument("-lc", "--low-cut", type=float, default=500.0, help="The lowcut applied in Hz")
     parser.add_argument("-hc", "--high-cut", type=float, default=20000.0, help="The highcut applied in Hz")

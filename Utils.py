@@ -8,6 +8,7 @@ class ImageClassificationCategories(Enum):
     night = "Night"
     ice = "Ice"
     no_ice = "No Ice"
+    NA = "NA"
 
     def __str__(self):
         return self.value
